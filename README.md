@@ -695,21 +695,19 @@ adding `:custom_filter` like this:
 
 ```ruby
 g.column name: 'Project Name', attribute: 'name', assoc: :project,
-         custom_filter: Project.find(:all).map{|pr| [pr.name, pr.name]} do |task|
-  task.project.name if task.project
-end
+         custom_filter: Project.all.pluck(&:name)
 ```
 
 is bad style and can fail, because the resulting condition will compare the name of the project,
 `projects.name` to a string, and in some databases it is possible that different records
 (projects in our example) have the same name.
 
-To use filter with foreign keys, it is advised to change the declaration of the column from
+To use a filter with foreign keys, it is advised to change the declaration of the column from
 `projects.name`, to `tasks.project_id`, and build the dropdown with foreign keys as values:
 
 ```ruby
-g.column name: 'Project Name', attribute: 'tasks.project_id',
-         custom_filter: Project.find(:all).map{|pr| [pr.id, pr.name]} do |task|
+g.column name: 'Project Name', attribute: 'project_id',
+         custom_filter: Project.all.map { |pr| [pr.name, pr.id] } do |task|
   task.project.name if task.project
 end
 ```
