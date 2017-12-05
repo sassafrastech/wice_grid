@@ -118,7 +118,12 @@ module Wice
         grid_csv(grid, rendering)
       else
         # If blank_slate is defined we don't show any grid at all
-        if rendering.blank_slate_handler && grid.resultset.size == 0 && !grid.filtering_on?
+        #
+        # TNS, 2017-12-05:
+        # We need to force the resultset Relation to do a full query (instead of a COUNT(*) query)
+        # here otherwise we were getting some feature spec failures due
+        # to the COUNT query including expressions in the ORDER clause.
+        if rendering.blank_slate_handler && grid.resultset.to_a.size == 0 && !grid.filtering_on?
           generate_blank_slate(grid, rendering)
         else
           grid_html(grid, options, rendering, reuse_last_column_for_filter_buttons)
