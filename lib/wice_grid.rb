@@ -299,6 +299,7 @@ module Wice
         @ar_options[:order] = add_custom_order_sql(complete_column_name(@status[:order]))
 
         @ar_options[:order] += ' ' + @status[:order_direction]
+        @ar_options[:order] = Arel.sql(@ar_options[:order])
       end
 
       @ar_options[:joins]   = @options[:joins]
